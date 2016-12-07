@@ -1,4 +1,4 @@
-FROM elek/bigdata-base:5
+FROM elek/bigdata-base:6
 ENV CONF_DIR /opt/zookeeper/conf
 ADD defaults/* defaults/
 ADD url .
