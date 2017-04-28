@@ -2,7 +2,7 @@
 set -ex
 git reset --hard
 git clean -f
-git checkout $1
+git checkout -B $1
 git reset --hard master
 git reset HEAD@{1}
 BASE_IMAGE=$(basename $(dirname $(find -name baseimage)))
