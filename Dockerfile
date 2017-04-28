@@ -1,4 +1,4 @@
-FROM elek/bigdata-base:15
+FROM elek/bigdata-base:16
 ENV PATH $PATH:/opt/zookeeper/bin
 ENV CONF_DIR /opt/zookeeper/conf
 ADD defaults/* defaults/
