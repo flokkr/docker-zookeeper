@@ -1,0 +1,17 @@
+sudo: required
+
+env:
+  - VERSION=latest
+  - VERSION=3.4.9 URL=http://xenia.sote.hu/ftp/mirrors/www.apache.org/zookeeper/zookeeper-3.4.9/zookeeper-3.4.9.tar.gz
+  - VERSION=3.4.10 URL=http://xenia.sote.hu/ftp/mirrors/www.apache.org/zookeeper/zookeeper-3.4.10/zookeeper-3.4.10.tar.gz
+
+services:
+   - docker
+
+script:
+   - make build
+
+after_success:
+   - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
+   - make deploy
+

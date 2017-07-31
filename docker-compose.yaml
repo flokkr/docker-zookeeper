@@ -1,0 +1,8 @@
+version: "2"
+services:
+  zookeeper:
+      image: flokkr/zookeeper
+      hostname: zookeeper1
+      environment:
+        ZOO.CFG_clientPort: 2181
+        ZOO.CFG_dataDir: /tmp/zookeeper

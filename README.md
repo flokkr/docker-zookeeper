@@ -1,29 +1,36 @@
 # Zookeeper docker image
 
-These images are part of the bigdata docker image series. All of the images use the same [base docker image](https://github.com/elek/docker-bigdata-base) which contains advanced configuration loading.
+These images are part of the bigdata docker image series. All of the images use the same [base docker image](https://github.com/flokkr/docker-baseimage) which contains advanced configuration loading.
+
+For more details go to the [organization page](https://github.com/flokkr/flokk).
 
 
-## Configuration loading
 
-The containers supports multiple configuration loading mechanism. (All of the configuration loading is defined in the [base-docker](https://github.com/elek/docker-bigdata-base) image. The configuration methods are stored in the `/opt/configurer` and `/opt/configuration` directory and could be selected by setting the environment variable `CONFIG_TYPE`
+## Configuration and extensions
 
-You can see various example configuration, ansible and docker-compose scripts at the main [umbrella repository](https://github.com/elek/bigdata-docker).
+The flokkr containers support multiple configuration loading mechanism and various extensions. All of the these are defined in the [flokkr baseimage](https://github.com/flokkr/docker-baseimage) and could be activated by environment variables.
 
-The three main configuration loading mechanis is:
+The available plugins:
 
- * ```CONFIG_TYPE=simple```: Using some simple default and configuration defined with environment variables.
- * ```CONFIG_TYPE=consul```: Using configuration files (and not list of ```key: value``` pairs) stored in a consul. Supports dynamic restart if the configuration is changing.
- * ```CONFIG_TYPE=springconfig```: Using configuration from the spring config server.
+| Name      | Description                              |
+| --------- | ---------------------------------------- |
+| envtoconf | **Simple onfiguration loading**, suggested for stand-alone docker files. Converts environment variables to xml/property configuration based on naming convention |
+| consul    | **Complex configuration loading from consul**, downloads configuration from consul server and restart when the configuration is changed. Suggested for multi-host setups. |
+| btrace    | Instruments the java option with custom Btrace script (with modifying the JAVA_OPTS) |
 
-### Simple configuration
+### Plugin details
 
-This is the default configuration.
+#### ENVTOCONF: Simple configuration loading
 
-Every configuration file is defined with a list of ```key: value``` pairs, even if they will be converted finally to hadoop xml format. The destination format is defined by the extensions (or by an additional format specifier)
+Could be activated by ```CONFIG_TYPE=simple``` settings, but it's the default.
+
+Every configuration could be defined with environment variables, and they will be converted finally to *hadoop xml, properties, conf* or other format. The destination format (and the destination file name) is defined with the name of the environment variable according to a naming convention.
 
 The generated files will be saved to the `$CONF_DIR` directory.
 
-#### Naming convention for set config keys from enviroment variables
+The source code of the converter utility can be found in a [separated repository](https://github.com/elek/envtoconf).
+
+##### Naming convention for set config keys from enviroment variables
 
 To set any configuration variable you shold follow the following pattern:
 
@@ -54,109 +61,89 @@ For example:
 SERVER.CONF!CFG_zookeeper.address=zookeeper:2181
 ```
 
-#### Available transformation
+##### Available transformation
 
- * xml: HADOOP xml file format
- * properties: key value pairs with ```:``` as separator
- * cfg: key value pairs with ```=``` as separator
- * conf: key value pairs with space as spearator (spark-defaults is an example)
- * env: key value paris with ```=``` as separator
- * sh: as the env but also includes the export keyword
- * yaml: yaml file representation (only basic map and list are supported)
- * yml: same
+*  xml: HADOOP xml file format
 
-#### Example
+*  properties: key value pairs with ```:``` as separator
 
-The simple directory in the [bigdata-docker](https://github.com/elek/bigdata-docker) project contains a [docker-compose](https://github.com/elek/bigdata-docker/blob/master/simple/docker-compose.yaml) example using simple configuration loading.
+*  cfg: key value pairs with ```=``` as separator
 
-### Consul config loading
+*  conf: key value pairs with space as spearator (spark-defaults is an example)
+
+*  env: key value paris with ```=``` as separator
+
+*  sh: as the env but also includes the export keyword
+
+     ##### Configuration reference
+
+     The plugin itself could be configured with the following environment variables.
+
+   | Name        | Default                                  | Description                              |
+   | ----------- | ---------------------------------------- | ---------------------------------------- |
+   | CONF_DIR    | *Set in the docker container definitions* | The location where the configuration files will be saved. |
+   | CONFIG_TYPE | simple                                   | For compatibility reason. If the value is simple, the conversion is active. |
+
+#### CONSUL: Consul config loading
 
 Could be activated with ```CONFIG_TYPE=consul```
 
 * The starter script list the configuration file names based on a consul key prefix. All the files will be downloaded from the consul key value store and the application process will be started with consul-template (enable an automatic restart in case of configuration file change)
 
-* With a `config.ini` (also uploaded to consul) you can set execute additional processing _after_ the file is downloaded from the consul:
+The source code of the consul based configuration loading and launcher is available at the [elek/consul-launcher](https://github.com/elek/consul-launcher) repository.
 
-   1. transformation: will transform the files according specific transformation. Currently only one transformation available: _template_, which renders the final file via Jinja2 (environment variables are replace)
+| Name        | Default                                  | Description                              |
+| ----------- | ---------------------------------------- | ---------------------------------------- |
+| CONF_DIR    | *Set in the docker container definitions* | The location where the configuration files will be saved. |
+| CONFIG_TYPE | consul                                   | For compatibility reason. If the value is consul, the consul based configuration handling is active. |
+| CONSUL_PATH | conf                                     | The path of the subtree in the consul where the configurations are. |
+| CONSUL_KEY  |                                          | The  path where the configuration for this container should be downloaded from. The effective path will be ```$CONSUL_PATH/$CONSUL_KEY``` |
 
-   2. post_write_hook: will execute  the downloaded files.
+#### BTRACE: btrace instrumentation
 
-Both the transformation and post_write_hook could be configured by the config.ini with file name based regular expression.
+Could be enabled with setting ```BTRACE_ENABLED=true``` or just setting ```BTRACE_SCRIPT```.
 
-Example config.ini:
+It adds btrace javaagent configuration to the JAVA_OPTS (or any other opts defined by BTRACE_OPTS_VAR). The standard output is redirected to ```/tmp/output.log```, and the btrace output will be displayed on the standard output (over a ```/tmp/btrace.out``` file)
 
-```
-[transformation]
-template=.*\.xml
+| Name            | Default                                  | Description                              |
+| --------------- | ---------------------------------------- | ---------------------------------------- |
+| CONF_DIR        | *Set in the docker container definitions* | The location where the configuration files will be saved. |
+| BTRACE_SCRIPT   | <notset>                                 | The location of the compiled btrace script. Coule be absolute or relative to the ```/opt/plugins/020_btrace/btrace``` |
+| BTRACE_OPTS_VAR | JAVA_OPTS                                | The name of the shell variable where the agent parameters should be injected. |
 
-[post_write_hook]
-execute=.*\.init
-```
 
 #### Configuration
 
- * `CONSUL_PATH` defines the root of the subtree where the configuration are downloaded from. The root could also contain a configuration `config.ini`. Default is `conf`
+* `CONSUL_PATH` defines the root of the subtree where the configuration are downloaded from. The root could also contain a configuration `config.ini`. Default is `conf`
 
- *  `CONSUL_KEY` is optional. It defines a subdirectory to download the the config files. If both `CONSUL_PATH` and `CONSUL_KEY` are defined, the config files will be downloaded from `$CONSUL_PATH/$CONSUL_KEY` but the config file will be read from `$CONSUL_PATH/config.ini`
+* `CONSUL_KEY` is optional. It defines a subdirectory to download the the config files. If both `CONSUL_PATH` and `CONSUL_KEY` are defined, the config files will be downloaded from `$CONSUL_PATH/$CONSUL_KEY` but the config file will be read from `$CONSUL_PATH/config.ini`
 
-## Running
+## Examples
 
-Using the image depends from the configuration loading and the exact use case. You can find multiple examples in [this](https://github.com/elek/bigdata-docker) repository to use the images:
+For getting started use the included docker-compose file and start both hdfs and yarn clusters:
 
-* on the local machine using docker-compose
-* on remote cluster using ansible 
-* on remote cluster and local macine with using docker-compose downloaded from the consul image. 
+```
+docker-compose up -d
+```
 
+You can adjust the settings in the docker-compose file according to the naming convention.
+
+## Smoketest
+
+```
+docker-compose exec zookeeper zkCli.sh
+ls /
+```
 
 
 ## Versioning policy
 
   The _latest_ tag points to the latest configuration loading and the latest stable apache version.
 
-  The _testing_ usually points to a cutting edge developer snapshot or RC/alpha release but expected to be working. 
-
   If there is plain version tag without prefix it is synchronized with the version of the original apache software.
 
-  It there is a prefix (eg. HDP) it includes a specific version from a specific distribution.
+  It there is a prefix (eg. HDP) it includes a specific version from a specific vendor distribution.
 
   As the configuration loading in the base image is constantly evolving even the tags of older releases may be refreshed over the time.
 
-## Local build
-
-Custom version could be built by running `branch.sh` and `localbuild.sh`
-
-First set DOCKER_TAG environment variable:
-
-```
-export DOCKER_TAG=3.0.0-alpha3-SNAPSHOT
-```
-
-After that you can modify the base image to download tar file from a custom location:
-
-```
-./branch.sh http://localhost/apache-hadoop.tar.gz
-```
-
-If url is replaced, you can build the images:
-
-```
-./localbuild.sh
-```
-
-After the build, you can use the images with the specified tag:
-
-```
-docker run .... elek/image_name:$DOCKER_TAG
-```
-
-Note: if you have tar file locally, you can server it with a simple http server:
-
-With python3:
-```
-python3 -m http.server
-```
-
-With python2:
-```
-python -m SimpleHTTPServer
-```
+  Images are build with travis with matrix parameters and uploaded to the docker hub from travis.
