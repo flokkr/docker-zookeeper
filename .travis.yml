@@ -11,7 +11,7 @@ services:
 script:
    - make build
 
-after_success:
+deploy:
    - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
    - make deploy
 
