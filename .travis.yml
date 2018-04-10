@@ -1,15 +1,14 @@
 sudo: required
 
 env:
-  - VERSION=latest
-  - VERSION=3.4.9 URL=http://xenia.sote.hu/ftp/mirrors/www.apache.org/zookeeper/zookeeper-3.4.9/zookeeper-3.4.9.tar.gz
-  - VERSION=3.4.10 URL=http://xenia.sote.hu/ftp/mirrors/www.apache.org/zookeeper/zookeeper-3.4.10/zookeeper-3.4.10.tar.gz
+  - VERSION=3.4.11 TAG=latest
+  - VERSION=3.4.11 TAG=3.4.11
 
 services:
    - docker
 
 script:
-   - make build
+   - ./build -t $TAG -v $VERSION build
 
 
 before_deploy:
@@ -17,5 +16,5 @@ before_deploy:
 
 deploy:
    - provider: script
-     script: make deploy
+     script: ./build -t $TAG -v $VERSION deploy
 
