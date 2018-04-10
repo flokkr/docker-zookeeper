@@ -8,7 +8,7 @@ services:
    - docker
 
 script:
-   - ./build -t $TAG -v $VERSION build
+   - ./build.sh -t $TAG -v $VERSION build
 
 
 before_deploy:
@@ -16,5 +16,5 @@ before_deploy:
 
 deploy:
    - provider: script
-     script: ./build -t $TAG -v $VERSION deploy
+     script: ./build.sh -t $TAG -v $VERSION deploy
 
