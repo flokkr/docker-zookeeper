@@ -11,7 +11,7 @@ deploy() {
 }
 
 TAG=latest
-ZOOKEEPER_VERSION=3.4.11
+ZOOKEEPER_VERSION=3.4.13
 
 while getopts ":v:t:" opt; do
   case $opt in
