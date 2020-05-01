@@ -1,0 +1,8 @@
+name: zookeeper
+basetag: 36
+urlpath: zookeeper/zookeeper-%s/apache-zookeeper-%s-bin.tar.gz
+containers:
+   - flokkr/zookeeper
+git: https://github.com/flokkr/docker-zookeeper
+versions:
+  - 3.6.1

@@ -1,0 +1,37 @@
+
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: zookeeper
+spec:
+  serviceName: zookeeper
+  replicas: 1
+  updateStrategy:
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: zookeeper
+      component: zookeeper
+  podManagementPolicy: Parallel
+  template:
+    metadata:
+      labels:
+        app: zookeeper
+        component: zookeeper
+    spec:
+      containers:
+      - name: zookeeper
+        image: flokkr/zookeeper:3.6.1
+        env:
+        - name: SLEEP
+          value: "5"
+        - name: ZOOKEEPER_ID_FROM_HOST
+          value: /data/zookeeper
+        volumeMounts:
+        - name: config
+          mountPath: /opt/zookeeper/conf
+          readOnly: true
+      volumes:
+      - name: config
+        configMap:
+          name: zookeeper-config
