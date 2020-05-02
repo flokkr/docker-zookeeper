@@ -31,7 +31,12 @@ spec:
         - name: config
           mountPath: /opt/zookeeper/conf
           readOnly: true
+        - name: smoketest
+          mountPath: /opt/smoketest
       volumes:
       - name: config
         configMap:
           name: zookeeper-config
+      - name: smoketest
+        hostPath:
+          path: /home/elek/projects/flokkr/docker-zookeeper/examples/smoketest
