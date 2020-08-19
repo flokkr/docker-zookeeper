@@ -35,6 +35,10 @@ kubectl apply -f "$K8S_DIR"
 
 retry all_pods_are_running
 
+kubectl wait --for=condition=Ready pod/zookeeper-0
+kubectl wait --for=condition=Ready pod/zookeeper-1
+kubectl wait --for=condition=Ready pod/zookeeper-2
+
 execute_robot_test zookeeper-0 /opt/smoketest/zookeeper.robot "$RESULT_DIR/zookeeper.xml"
 
 cd "$RESULT_DIR" && rebot *.xml

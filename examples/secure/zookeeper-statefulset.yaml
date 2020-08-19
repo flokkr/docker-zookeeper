@@ -22,6 +22,9 @@ spec:
       containers:
       - name: zookeeper
         image: flokkr/zookeeper:3.6.1
+        livenessProbe:
+          tcpSocket:
+            port: 2181
         envFrom:
         - configMapRef:
             name: zookeeper-config
@@ -33,8 +36,6 @@ spec:
           mountPath: /etc/zookeeper-jaas
         - name: keytabs
           mountPath: /etc/security/keytabs
-        - name: mount
-          mountPath: /opt/smoketest
       volumes:
       - name: krb5conf
         configMap:
@@ -45,6 +46,3 @@ spec:
       - name: keytabs
         secret:
           secretName: zookeeper-keytabs
-      - name: mount
-        hostPath:
-          path: /home/elek/projects/flokkr/docker-zookeeper/examples/smoketest

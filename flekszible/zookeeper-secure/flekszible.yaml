@@ -1,0 +1,4 @@
+import:
+ - path: ../zookeeper
+   transformations:
+   - type: zookeeper/secure

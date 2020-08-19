@@ -4,8 +4,6 @@ source:
 import:
 - path: krb5
 - path: zookeeper-secure
-- path: zookeeper
   transformations:
   - type: image
     image: flokkr/zookeeper:3.6.1
-  - type: zookeeper/secure
