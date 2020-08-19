@@ -22,21 +22,29 @@ spec:
       containers:
       - name: zookeeper
         image: flokkr/zookeeper:3.6.1
-        env:
-        - name: SLEEP
-          value: "5"
-        - name: ZOOKEEPER_ID_FROM_HOST
-          value: /data/zookeeper
+        envFrom:
+        - configMapRef:
+            name: zookeeper-config
         volumeMounts:
-        - name: config
-          mountPath: /opt/zookeeper/conf
-          readOnly: true
-        - name: smoketest
+        - name: krb5conf
+          mountPath: /etc/krb5.conf
+          subPath: krb5.conf
+        - name: jaas
+          mountPath: /etc/zookeeper-jaas
+        - name: keytabs
+          mountPath: /etc/security/keytabs
+        - name: mount
           mountPath: /opt/smoketest
       volumes:
-      - name: config
+      - name: krb5conf
         configMap:
-          name: zookeeper-config
-      - name: smoketest
+          name: krb5-conf
+      - name: jaas
+        configMap:
+          name: zookeeper-jaas
+      - name: keytabs
+        secret:
+          secretName: zookeeper-keytabs
+      - name: mount
         hostPath:
           path: /home/elek/projects/flokkr/docker-zookeeper/examples/smoketest

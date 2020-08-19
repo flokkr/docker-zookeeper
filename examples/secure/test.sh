@@ -20,20 +20,32 @@ set -e
 export K8S_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
 # shellcheck source=/dev/null
-source "$K8S_DIR/testlib.sh"
+source "$K8S_DIR/../testlib.sh"
 
 export RESULT_DIR=${RESULT_DIR:-"$K8S_DIR/result"}
 rm -rf "$RESULT_DIR"
 mkdir -p "$RESULT_DIR"
 
-flekszible -s "$K8S_DIR" -d "$K8S_DIR" generate -t util/mounttests:path="$K8S_DIR/smoketest"
+reset_k8s_env
+
+rm -rf .state
+
+cd kerberos-server
+
+flekszible generate
+
+kubectl apply -f .
+
+sleep 10
+
+cd -
+
+flekszible -s "$K8S_DIR" -d "$K8S_DIR" generate -t mount:hostPath=$(realpath $K8S_DIR/../smoketest),path=/opt/smoketest
 
 kubectl apply -f "$K8S_DIR"
 
 retry all_pods_are_running
 
 execute_robot_test zookeeper-0 /opt/smoketest/zookeeper.robot "$RESULT_DIR/zookeeper.xml"
-
-stop_k8s_env "$K8S_DIR"
 
 cd "$RESULT_DIR" && rebot *.xml

@@ -1,0 +1,7 @@
+source:
+- path: ../..
+import:
+- path: zookeeper
+  transformations:
+  - type: image
+    image: flokkr/zookeeper:3.6.1

@@ -1,0 +1,18 @@
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: zookeeper-config
+data:
+  LOG4J.PROPERTIES_log4j.rootLogger: INFO, stdout
+  LOG4J.PROPERTIES_log4j.appender.stdout: org.apache.log4j.ConsoleAppender
+  LOG4J.PROPERTIES_log4j.appender.stdout.layout: org.apache.log4j.PatternLayout
+  LOG4J.PROPERTIES_log4j.appender.stdout.layout.ConversionPattern: '%d{yyyy-MM-dd
+    HH:mm:ss} %-5p %c{1}:%L - %m%n'
+  ZOO.CFG_tickTime: "2000"
+  ZOO.CFG_dataDir: /data/zookeeper
+  ZOO.CFG_clientPort: "2181"
+  ZOO.CFG_initLimit: "5"
+  ZOO.CFG_syncLimit: "2"
+  ZOO.CFG_server.0: zookeeper-0.zookeeper:2888:3888
+  ZOOKEEPER_ID_FROM_HOST: /data/zookeeper

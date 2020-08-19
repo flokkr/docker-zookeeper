@@ -1,9 +1,9 @@
 source:
-- path: ..
-- url: github.com/flokkr/infra-flekszible
+- path: ../..
 import:
-- path: util
 - path: zookeeper
   transformations:
+  - type: zookeeper/scale
+    replicas: 3
   - type: image
     image: flokkr/zookeeper:3.6.1

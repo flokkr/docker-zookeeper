@@ -86,3 +86,17 @@ execute_robot_test() {
    kubectl exec "${CONTAINER}" -- robot -d /tmp/report "${TEST}" || true
    kubectl cp "${CONTAINER}":/tmp/report/output.xml "${3:-output.xml}" || true
 }
+
+reset_k8s_env() {
+   #reset environment
+   kubectl delete job --all
+   kubectl delete statefulset --all
+   kubectl delete daemonset --all
+   kubectl delete deployment --all
+   kubectl delete service --all
+   kubectl delete configmap --all
+   kubectl delete pod --all
+   kubectl delete pvc --all
+   kubectl delete pv --all
+
+}

@@ -1,0 +1,56 @@
+name: zookeeper/secure
+---
+- type: krb5/configure
+- type: add
+  trigger:
+     metadata:
+        name: zookeeper-config
+  path:
+    - data
+  value:
+     JVMFLAGS: "-Djava.security.auth.login.config=/etc/zookeeper-jaas/jaas.conf"
+- type: add
+  path:
+    - spec
+    - template
+    - spec
+    - containers
+    - ".*"
+    - volumeMounts
+  value:
+    - name: jaas
+      mountPath: /etc/zookeeper-jaas
+- type: add
+  trigger:
+     metadata:
+       name: zookeeper
+  path:
+    - spec
+    - template
+    - spec
+    - volumes
+  value:
+    - name: jaas
+      configMap:
+        name: zookeeper-jaas
+- type: add
+  path:
+    - spec
+    - template
+    - spec
+    - (initC|c)ontainers
+    - .*
+    - volumeMounts
+  value:
+    - name: keytabs
+      mountPath: /etc/security/keytabs
+- type: add
+  path:
+   - spec
+   - template
+   - spec
+   - volumes
+  value:
+   - name: keytabs
+     secret:
+       secretName: zookeeper-keytabs

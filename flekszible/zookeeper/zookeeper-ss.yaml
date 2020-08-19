@@ -34,16 +34,7 @@ spec:
       containers:
         - name: zookeeper
           image: flokkr/zookeeper
-          env:
-            - name: SLEEP
-              value: "5"
-            - name: ZOOKEEPER_ID_FROM_HOST
-              value: /data/zookeeper
-          volumeMounts:
-            - name: config
-              mountPath: "/opt/zookeeper/conf"
-              readOnly: true
-      volumes:
-        - name: config
-          configMap:
-            name: zookeeper-config
+          envFrom:
+            - configMapRef:
+                name: zookeeper-config
+

@@ -1,0 +1,34 @@
+
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: zookeeper
+spec:
+  serviceName: zookeeper
+  replicas: 1
+  updateStrategy:
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: zookeeper
+      component: zookeeper
+  podManagementPolicy: Parallel
+  template:
+    metadata:
+      labels:
+        app: zookeeper
+        component: zookeeper
+    spec:
+      containers:
+      - name: zookeeper
+        image: flokkr/zookeeper:3.6.1
+        envFrom:
+        - configMapRef:
+            name: zookeeper-config
+        volumeMounts:
+        - name: mount
+          mountPath: /opt/smoketest
+      volumes:
+      - name: mount
+        hostPath:
+          path: /home/elek/projects/flokkr/docker-zookeeper/examples/smoketest
