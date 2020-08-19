@@ -1,15 +1,15 @@
 # Apache Zookeeper Docker images
 
-These images are part of the bigdata [Docker image series](https://github.com/flokkr). All of the images use the same [base docker image](https://github.com/flokkr/docker-baseimage) which contains advanced configuration loading.
+These images are part of the big-data [Docker image series](https://flokkr.github.io). All of the images use the same [base docker image](https://github.com/flokkr/docker-baseimage) which contains advanced configuration loading and provides Kubernetes example resources..
 
-It supports configuration based on environment variables (using specific naming convention), downloaded from consul and other plugins (for example to generate kerberos keystabs). See the details in the [launcher](https://github.com/flokkr/launcher/) repository.
+## Getting started
 
-## Usage
+Repository contains generated Kubernetes examples (`/examples`) and re-usable flekszible definitions.
 
-The easiest way to run a storm cluster is just use the included ```docker-compose.yaml``` file.
+To generate your own resources, use [flekszible](https://github.com/elek/flekszible):
 
-Checkout the repository and do a ```docker-compose up -d``` 
-
-You can adjust the settings in the `compose-config` file.
-
-To run it in Kubernetes see the [Flokkr](https://github.com/flokkr/k8s) which provides a framework to run (Apache) Big data projects in kubernetes with the help of [Flekszible](https://github.com/elek/flekszible)
+```
+flekszible source add github.com/elek/docker-zookeeper
+flekszible app add zookeeper
+flekszible generate
+```
