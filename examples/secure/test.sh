@@ -21,6 +21,7 @@ export K8S_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd 
 
 # shellcheck source=/dev/null
 source "$K8S_DIR/../testlib.sh"
+cd $K8S_DIR
 
 export RESULT_DIR=${RESULT_DIR:-"$K8S_DIR/result"}
 rm -rf "$RESULT_DIR"
