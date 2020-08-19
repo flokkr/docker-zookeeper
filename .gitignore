@@ -1,3 +1,5 @@
+examples/secure/zookeeper-keytabs-secret.yaml
+.state
 *.html
 result
 .cache

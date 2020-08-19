@@ -37,7 +37,7 @@ flekszible generate
 
 kubectl apply -f .
 
-sleep 10
+retry grep_log krb5-0 "(info): starting"
 
 cd -
 
