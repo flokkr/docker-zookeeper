@@ -2,7 +2,7 @@ name: test
 on:
   - push
 jobs:
-  build:
+  test:
     strategy:
       matrix:
         test: ["simple", "quorum", "secure"]
@@ -30,5 +30,5 @@ jobs:
       - uses: actions/upload-artifact@master
         if: always()
         with:
-          name: robot
+          name: ${{ matrix.test }}
           path: examples/${{ matrix.test }}/result
