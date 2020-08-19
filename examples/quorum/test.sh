@@ -39,6 +39,11 @@ kubectl wait --for=condition=Ready pod/zookeeper-0
 kubectl wait --for=condition=Ready pod/zookeeper-1
 kubectl wait --for=condition=Ready pod/zookeeper-2
 
+
+retry grep_log zookeeper-0 "Peer state changed"
+retry grep_log zookeeper-1 "Peer state changed"
+retry grep_log zookeeper-2 "Peer state changed"
+
 execute_robot_test zookeeper-0 /opt/smoketest/zookeeper.robot "$RESULT_DIR/zookeeper.xml"
 
 cd "$RESULT_DIR" && rebot *.xml

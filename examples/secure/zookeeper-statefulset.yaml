@@ -22,9 +22,6 @@ spec:
       containers:
       - name: zookeeper
         image: flokkr/zookeeper:3.6.1
-        livenessProbe:
-          tcpSocket:
-            port: 2181
         envFrom:
         - configMapRef:
             name: zookeeper-config
