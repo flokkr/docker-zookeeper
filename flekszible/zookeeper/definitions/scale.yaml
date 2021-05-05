@@ -20,6 +20,6 @@ parameters:
   path:
     - data
   value:
-    {{range $val := Iterate .replicas}}
+    {{range $val := Iterate 0 .replicas}}
     ZOO.CFG_server.{{.}}: zookeeper-{{.}}.zookeeper:2888:3888
     {{end}}
