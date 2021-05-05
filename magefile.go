@@ -3,8 +3,6 @@
 package main
 
 import (
-        // mage:import
-        _ "github.com/elek/magelib"
+	// mage:import
+	_ "github.com/elek/magelib"
 )
-
-

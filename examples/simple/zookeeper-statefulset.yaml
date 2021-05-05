@@ -3,6 +3,9 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: zookeeper
+  labels:
+    app: zookeeper
+    component: zookeeper
 spec:
   serviceName: zookeeper
   replicas: 1
@@ -22,13 +25,9 @@ spec:
       containers:
       - name: zookeeper
         image: flokkr/zookeeper:3.6.1
+        livenessProbe:
+          tcpSocket:
+            port: 2181
         envFrom:
         - configMapRef:
             name: zookeeper-config
-        volumeMounts:
-        - name: mount
-          mountPath: /opt/smoketest
-      volumes:
-      - name: mount
-        hostPath:
-          path: /home/elek/projects/flokkr/docker-zookeeper/examples/smoketest

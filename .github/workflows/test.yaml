@@ -21,7 +21,7 @@ jobs:
       - name: Install flekszible
         run: |
            cd /tmp
-           wget https://github.com/elek/flekszible/releases/download/v2.0.2/flekszible_2.0.2_Linux_x86_64.tar.gz -O - | tar -zx
+           wget https://github.com/elek/flekszible/releases/download/v2.2.0/flekszible_2.2.0_Linux_x86_64.tar.gz -O - | tar -zx
            chmod +x flekszible
            sudo mv flekszible /usr/bin/flekszible
       - name: Run test
